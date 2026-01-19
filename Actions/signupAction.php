@@ -2,6 +2,9 @@
 require('database.php'); // $bdd = PDO
 
 if (isset($_POST['valider'])) {
+require('database.php'); // $bdd = PDO
+
+if (isset($_POST['valider'])) {
 
     if (
         !empty($_POST['IdEt']) &&
@@ -10,18 +13,18 @@ if (isset($_POST['valider'])) {
         !empty($_POST['prenom']) &&
         !empty($_POST['sexe']) &&
         !empty($_POST['niveau']) &&
-        !empty($_POST['filiere'])
+        !empty($_POST['filiere']) &&
+        !empty($_POST['telephone'])
     ) {
 
-        $IdEt   = htmlspecialchars($_POST['IdEt']);
-        $nom    = htmlspecialchars($_POST['name']);
-        $prenom = htmlspecialchars($_POST['prenom']);
-        $sexe   = $_POST['sexe'];
-        $niveau = $_POST['niveau'];
-        $filiere = $_POST['filiere'];
-
-        // Hash mot de passe
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        $IdEt      = htmlspecialchars($_POST['IdEt']);
+        $nom       = htmlspecialchars($_POST['name']);
+        $prenom    = htmlspecialchars($_POST['prenom']);
+        $sexe      = $_POST['sexe']; // M ou F
+        $niveau    = $_POST['niveau'];
+        $filiere   = $_POST['filiere'];
+        $telephone = htmlspecialchars($_POST['telephone']);
+        $password  = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
         // Vérifier si l'étudiant existe déjà
         $check = $bdd->prepare("SELECT id FROM Etudiant WHERE Id_Etudiant = ?");
@@ -31,8 +34,8 @@ if (isset($_POST['valider'])) {
 
             $insert = $bdd->prepare("
                 INSERT INTO Etudiant
-                (Id_Etudiant, Mdp, Nom, Prenom, Genre, Niveau, Filiere)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                (Id_Etudiant, Mdp, Nom, Prenom, Sexe, Niveau, Filiere, Telephone, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
             ");
 
             $insert->execute([
@@ -42,10 +45,14 @@ if (isset($_POST['valider'])) {
                 $prenom,
                 $sexe,
                 $niveau,
-                $filiere
+                $filiere,
+                $telephone
             ]);
-               header('Location: login.php');
-exit;
+
+            $successMsg = "Inscription réussie !";
+            header('Location: login.php');
+            exit;
+
         } else {
             $errorMsg = "Cet ID étudiant existe déjà.";
         }
@@ -53,4 +60,6 @@ exit;
     } else {
         $errorMsg = "Veuillez remplir tous les champs.";
     }
+}
+
 }

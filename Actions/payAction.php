@@ -1,52 +1,60 @@
 <?php
-session_start();
-require('../Actions/database.php'); // Connexion à la BDD
+require('database.php'); // $bdd = PDO
 
-if(!isset($_SESSION['etudiant'])){
-    header('Location: ../login.php');
-    exit;
-}
+if (isset($_POST['valider'])) {
 
-$etudiant = $_SESSION['etudiant'];
-$idEt = $etudiant['Id_Etudiant'];
-$nom = htmlspecialchars($etudiant['Nom']);
-$prenom = htmlspecialchars($etudiant['Prenom']);
-$niveau = htmlspecialchars($etudiant['Niveau']);
-$filiere = htmlspecialchars($etudiant['Filiere']);
+    if (
+        !empty($_POST['IdEt']) &&
+        !empty($_POST['password']) &&
+        !empty($_POST['name']) &&
+        !empty($_POST['prenom']) &&
+        !empty($_POST['sexe']) &&
+        !empty($_POST['niveau']) &&
+        !empty($_POST['filiere']) &&
+        !empty($_POST['telephone'])
+    ) {
 
-if(isset($_POST['montant'])) {
-    $montant = floatval($_POST['montant']);
+        $IdEt      = htmlspecialchars($_POST['IdEt']);
+        $nom       = htmlspecialchars($_POST['name']);
+        $prenom    = htmlspecialchars($_POST['prenom']);
+        $sexe      = $_POST['sexe']; // M ou F
+        $niveau    = $_POST['niveau'];
+        $filiere   = $_POST['filiere'];
+        $telephone = htmlspecialchars($_POST['telephone']);
+        $password  = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    // Vérifier le montant minimum
-    if($montant < 350){
-        die("<p style='color:red;'>Le montant minimum est 350 €.</p>");
+        // Vérifier si l'étudiant existe déjà
+        $check = $bdd->prepare("SELECT id FROM Etudiant WHERE Id_Etudiant = ?");
+        $check->execute([$IdEt]);
+
+        if ($check->rowCount() == 0) {
+
+            $insert = $bdd->prepare("
+                INSERT INTO Etudiant
+                (Id_Etudiant, Mdp, Nom, Prenom, Sexe, Niveau, Filiere, Telephone, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            ");
+
+            $insert->execute([
+                $IdEt,
+                $password,
+                $nom,
+                $prenom,
+                $sexe,
+                $niveau,
+                $filiere,
+                $telephone
+            ]);
+
+            $successMsg = "Inscription réussie !";
+            header('Location: login.php');
+            exit;
+
+        } else {
+            $errorMsg = "Cet ID étudiant existe déjà.";
+        }
+
+    } else {
+        $errorMsg = "Veuillez remplir tous les champs.";
     }
-
-    // Enregistrer le paiement
-    $insertPaiement = $bdd->prepare("INSERT INTO paiements (id_etudiant, montant) VALUES (?, ?)");
-    $insertPaiement->execute([$idEt, $montant]);
-
-    // Générer un numéro de logement : 2 lettres du nom + 3 chiffres
-    $logement = strtoupper(substr($nom,0,2)) . rand(100,999);
-
-    // Générer un numéro de chambre aléatoire (exemple)
-    $chambre = rand(1,200);
-
-    // Attribuer chambre et logement
-    $insertChambre = $bdd->prepare("INSERT INTO chambres (id_etudiant, numero_chambre, numero_logement) VALUES (?, ?, ?)");
-    $insertChambre->execute([$idEt, $chambre, $logement]);
-
-    // Afficher le reçu
-    echo "<div style='max-width:600px;margin:50px auto;padding:20px;border:1px solid #ccc;border-radius:10px;text-align:center;'>";
-    echo "<img src='../img/logo.png' alt='Logo' style='width:100px;margin-bottom:20px;'><h2>Reçu de paiement</h2>";
-    echo "<p><strong>Nom :</strong> $nom $prenom</p>";
-    echo "<p><strong>ID Étudiant :</strong> $idEt</p>";
-    echo "<p><strong>Niveau :</strong> $niveau</p>";
-    echo "<p><strong>Filière :</strong> $filiere</p>";
-    echo "<p><strong>Numéro de chambre :</strong> $chambre</p>";
-    echo "<p><strong>Numéro de logement :</strong> $logement</p>";
-    echo "<p><strong>Montant payé :</strong> €$montant</p>";
-    echo "<p><strong>Date :</strong> ".date('d/m/Y H:i')."</p>";
-    echo "</div>";
 }
-?>

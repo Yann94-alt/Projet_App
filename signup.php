@@ -24,7 +24,6 @@ require('actions/signupAction.php');
         <div class="row">
             <!-- Bloc gauche -->
             <div class="col-md-6">
-
                 <div class="mb-3">
                     <label class="form-label">ID Étudiant</label>
                     <input type="text" class="form-control" name="IdEt" required>
@@ -37,35 +36,21 @@ require('actions/signupAction.php');
 
                 <div class="mb-3">
                     <label class="form-label">Sexe</label><br>
-                    <input type="radio" name="sexe" value="Homme" required> Homme <br>
-                    <input type="radio" name="sexe" value="Femme"> Femme
+                    <input type="radio" name="sexe" value="M" required> M <br>
+                    <input type="radio" name="sexe" value="F"> F
                 </div>
-
             </div>
 
             <!-- Bloc droit -->
             <div class="col-md-6">
-
                 <div class="mb-3">
                     <label class="form-label">Nom</label>
-                    <input 
-                        type="text"
-                        class="form-control"
-                        name="name"
-                        pattern="[A-Za-zÀ-ÿ\s\-]+"
-                        title="Le nom ne doit contenir que des lettres"
-                        required>
+                    <input type="text" class="form-control" name="name" pattern="[A-Za-zÀ-ÿ\s\-]+" title="Le nom ne doit contenir que des lettres" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Prénom</label>
-                    <input 
-                        type="text"
-                        class="form-control"
-                        name="prenom"
-                        pattern="[A-Za-zÀ-ÿ\s\-]+"
-                        title="Le prénom ne doit contenir que des lettres"
-                        required>
+                    <input type="text" class="form-control" name="prenom" pattern="[A-Za-zÀ-ÿ\s\-]+" title="Le prénom ne doit contenir que des lettres" required>
                 </div>
 
                 <div class="mb-3">
@@ -91,6 +76,10 @@ require('actions/signupAction.php');
                     </select>
                 </div>
 
+                <div class="mb-3">
+                    <label class="form-label">Téléphone</label>
+                    <input type="text" class="form-control" name="telephone" pattern="^\+?\d{8,15}$" title="Entrez un numéro valide" required>
+                </div>
             </div>
         </div>
 
