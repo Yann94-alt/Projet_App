@@ -1,4 +1,5 @@
 <?php require('Actions/loginAction.php'); ?>
+<?php require('Actions/loginAdmin.php'); ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>

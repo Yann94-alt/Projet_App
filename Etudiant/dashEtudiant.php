@@ -36,18 +36,21 @@ $prenom = htmlspecialchars($etudiant['Prenom']);
 
 body{
     margin:0;
-    display:flex;
-    min-height:100vh;
     background:var(--bg);
-    font-family: 'Segoe UI', sans-serif;
+    font-family:'Segoe UI', sans-serif;
 }
 
-/* SIDEBAR */
+/* ================= SIDEBAR ================= */
 .sidebar{
+    position:fixed;
+    top:0;
+    left:0;
     width:250px;
+    height:100vh;
     background:linear-gradient(180deg,#1e3a8a,#1e40af);
     color:#fff;
     padding:20px 0;
+    overflow-y:auto;
 }
 
 .profile{
@@ -82,13 +85,13 @@ body{
     transform:translateX(5px);
 }
 
-/* MAIN */
+/* ================= MAIN ================= */
 .main{
-    flex:1;
+    margin-left:250px;
     padding:25px;
 }
 
-/* TOP BAR */
+/* ================= TOP BAR ================= */
 .top-bar{
     background:linear-gradient(135deg,#2563eb,#1e40af);
     color:#fff;
@@ -110,7 +113,7 @@ body{
     font-weight:600;
 }
 
-/* CARDS */
+/* ================= CARDS ================= */
 .cardBox{
     display:flex;
     gap:20px;
@@ -145,14 +148,14 @@ body{
     font-weight:600;
 }
 
-/* CAROUSEL */
+/* ================= CAROUSEL ================= */
 .carousel-item img{
     height:300px;
     object-fit:cover;
     border-radius:15px;
 }
 
-/* RULES */
+/* ================= RULES ================= */
 .rules-box{
     background:#fff;
     padding:25px;
@@ -166,11 +169,21 @@ body{
     color:var(--primary);
 }
 
-/* RESPONSIVE */
+/* ================= RESPONSIVE ================= */
 @media(max-width:768px){
-    body{flex-direction:column;}
-    .sidebar{width:100%;}
-    .cardBox{flex-wrap:nowrap;}
+    .sidebar{
+        position:relative;
+        width:100%;
+        height:auto;
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    .cardBox{
+        flex-wrap:nowrap;
+    }
 }
 </style>
 </head>
@@ -180,16 +193,18 @@ body{
 <!-- SIDEBAR -->
 <div class="sidebar">
     <div class="profile">
-        <ion-icon name="person-circle-outline"></ion-icon>
+        <a href="../Etudiant/profil.php">
+             <ion-icon name="person-circle-outline"></ion-icon>
         <p><?= $prenom ?> <?= $nom ?></p>
+        </a>
     </div>
 
     <ul>
-        <li><a href="#"><ion-icon name="bed-outline"></ion-icon> Ma chambre</a></li>
+        <li><a href="../Etudiant/chambre.php"><ion-icon name="bed-outline"></ion-icon> Ma chambre</a></li>
         <li><a href="../Etudiant/pay.php"><ion-icon name="card-outline"></ion-icon> Paiements</a></li>
-        <li><a href="#"><ion-icon name="mail-outline"></ion-icon> Messages</a></li>
-        <li><a href="#"><ion-icon name="document-text-outline"></ion-icon> Documents</a></li>
-        <li><a href="#"><ion-icon name="trash-outline"></ion-icon> Supprimer Compte</a></li>
+        <li><a href="../Etudiant/message.php"><ion-icon name="mail-outline"></ion-icon> Messages</a></li>
+        <li><a href="../Etudiant/doc"><ion-icon name="document-text-outline"></ion-icon> Documents</a></li>
+        <li><a href="../Etudiant/notif.php"><ion-icon name="notifications-outline"></ion-icon> Notifications</a></li>
     </ul>
 </div>
 
@@ -198,12 +213,11 @@ body{
 
     <div class="top-bar">
         <h1>Espace Étudiant</h1>
-        <a href="logout.php" class="logout">
+        <a href="deconnexion.php" class="logout">
             <ion-icon name="log-out-outline"></ion-icon> Déconnexion
         </a>
     </div>
 
-    <!-- CARDS -->
     <div class="cardBox">
         <a href="lien/restaurant.php" class="card">
             <ion-icon name="restaurant-outline"></ion-icon>
@@ -226,7 +240,6 @@ body{
         </a>
     </div>
 
-    <!-- CAROUSEL -->
     <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item active">
@@ -241,9 +254,8 @@ body{
         </div>
     </div>
 
-    <!-- RULES -->
     <div class="rules-box">
-        <h2> Règles d'entrée en cité</h2>
+        <h2>Règles d'entrée en cité</h2>
         <ul>
             <li>Respect des horaires</li>
             <li>Carte étudiant obligatoire</li>

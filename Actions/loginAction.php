@@ -1,38 +1,42 @@
 <?php
+// DÉMARRAGE SESSION (OBLIGATOIRE)
 session_start();
+
+// CONNEXION BASE DE DONNÉES
 require('database.php');
 
+// TRAITEMENT DU FORMULAIRE
 if (isset($_POST['Valider'])) {
 
     if (!empty($_POST['ident']) && !empty($_POST['password'])) {
 
-        $ident = htmlspecialchars($_POST['ident']);
-        $password = $_POST['password'];
+        $ident    = trim($_POST['ident']);      // ID étudiant
+        $password = $_POST['password'];          // mot de passe saisi
 
-        // Vérifier si l'étudiant existe
+        // RECHERCHE DE L'ÉTUDIANT
         $sql = $bdd->prepare("SELECT * FROM etudiant WHERE Id_Etudiant = ?");
         $sql->execute([$ident]);
 
-        if ($sql->rowCount() > 0) {
+        if ($sql->rowCount() === 1) {
 
             $UserInfos = $sql->fetch(PDO::FETCH_ASSOC);
 
-            // Vérification du mot de passe
+            // VÉRIFICATION DU MOT DE PASSE
             if (password_verify($password, $UserInfos['Mdp'])) {
 
-                // ✅ SESSION COMPLÈTE (TRÈS IMPORTANT)
+                // STOCKAGE DES INFOS EN SESSION
                 $_SESSION['etudiant'] = [
                     'id'           => $UserInfos['id'],
                     'Id_Etudiant'  => $UserInfos['Id_Etudiant'],
                     'Nom'          => $UserInfos['Nom'],
                     'Prenom'       => $UserInfos['Prenom'],
-                    'Sexe'         => $UserInfos['Sexe'],        // M / F
+                    'Sexe'         => $UserInfos['Sexe'],
                     'Niveau'       => $UserInfos['Niveau'],
                     'Filiere'      => $UserInfos['Filiere'],
                     'Telephone'    => $UserInfos['Telephone']
                 ];
 
-                // ✅ REDIRECTION CORRECTE (CHEMIN FIXÉ)
+                // REDIRECTION
                 header('Location: Etudiant/dashEtudiant.php');
                 exit;
 
